@@ -1,0 +1,20 @@
+diff --git a/src/EventSubscriber/RouteNormalizerRequestSubscriber.php b/src/EventSubscriber/RouteNormalizerRequestSubscriber.php
+index 800e022..36f4a1c 100644
+--- a/src/EventSubscriber/RouteNormalizerRequestSubscriber.php
++++ b/src/EventSubscriber/RouteNormalizerRequestSubscriber.php
+@@ -112,7 +112,14 @@ class RouteNormalizerRequestSubscriber implements EventSubscriberInterface {
+       // Append back the request query string from $_SERVER.
+       $query_string = $request->server->get('QUERY_STRING');
+       if ($query_string) {
+-        $redirect_uri .= '?' . $query_string;
++        parse_str($query_string, $query_string_array);
++        if(isset($query_string_array['q'])) {
++          unset($query_string_array['q']);
++        }
++        if(!empty($query_string_array)) {
++          $query_string = http_build_query($query_string_array);
++          $redirect_uri .= '?' . $query_string;
++        }
+       }
+
+       // Remove /index.php from redirect uri the hard way.
